@@ -30,7 +30,25 @@ function operate(a, b, operation) {
 function calcLogic(number) {
   return itsFirst ? (firstNumber += number) : (secondNumber += number);
 }
-
+function numManager() {
+  if (!firstNumber) {
+    if (result) firstNumber = result;
+    itsFirst = false;
+  }
+  if (firstNumber) {
+    itsFirst = false;
+    if (secondNumber) {
+      result = operate(+firstNumber, +secondNumber, operator);
+      console.log(
+        `first: ${firstNumber}, second: ${secondNumber}, result: ${result}`,
+      );
+      calcScreen.textContent = result;
+      // firstNumber = result;
+      firstNumber = "";
+      secondNumber = "";
+    }
+  }
+}
 // HTML elements
 const calculator = document.querySelector("#calculator");
 
@@ -47,7 +65,6 @@ for (let i = 0; i < 10; i++) {
   buttons[i].classList.add("numbers");
   buttons[i].addEventListener("click", (e) => {
     calcScreen.textContent = calcLogic(e.target.textContent);
-    console.log(firstNumber);
   });
   calculator.appendChild(buttons[i]);
 }
@@ -56,15 +73,7 @@ const addButton = document.createElement("button");
 addButton.classList.add("operator");
 addButton.textContent = "+";
 addButton.addEventListener("click", () => {
-  if (itsFirst) {
-    itsFirst = false;
-    if (result) firstNumber = result;
-  } else {
-    result = operate(+firstNumber, +secondNumber, operator);
-    calcScreen.textContent = result;
-    firstNumber = result;
-    secondNumber = "";
-  }
+  numManager();
   operator = add;
 });
 calculator.appendChild(addButton);
@@ -72,25 +81,41 @@ calculator.appendChild(addButton);
 const subtractButton = document.createElement("button");
 subtractButton.classList.add("operator");
 subtractButton.textContent = "-";
+subtractButton.addEventListener("click", () => {
+  numManager();
+  operator = subtract;
+});
 calculator.appendChild(subtractButton);
 
 const multiplyButton = document.createElement("button");
 multiplyButton.classList.add("operator");
 multiplyButton.textContent = "*";
+multiplyButton.addEventListener("click", () => {
+  numManager();
+  operator = multiply;
+});
 calculator.appendChild(multiplyButton);
 
 const divideButton = document.createElement("button");
 divideButton.classList.add("operator");
 divideButton.textContent = "/";
+divideButton.addEventListener("click", () => {
+  numManager();
+  operator = divide;
+});
 calculator.appendChild(divideButton);
 
 const operateButton = document.createElement("button");
 operateButton.classList.add("operator");
 operateButton.textContent = "=";
 operateButton.addEventListener("click", () => {
+  if ((!firstNumber) && (result)) firstNumber = result;
   if (secondNumber) {
     itsFirst = true;
     result = operate(+firstNumber, +secondNumber, operator);
+    console.log(
+      `first: ${firstNumber}, second: ${secondNumber}, result: ${result}`,
+    );
     calcScreen.textContent = result;
     firstNumber = "";
     secondNumber = "";
@@ -105,6 +130,7 @@ clearButton.textContent = "CLEAR";
 clearButton.addEventListener("click", () => {
   firstNumber = "";
   secondNumber = "";
+  result = "";
   calcScreen.textContent = 0;
   operator = 0;
 });
